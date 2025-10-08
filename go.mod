@@ -1,6 +1,6 @@
 module github.com/ulinja/batch-qrs
 
-go 1.25.0
+go 1.24.7
 
 require github.com/yeqown/go-qrcode/v2 v2.2.5
 

@@ -23,7 +23,7 @@ The program outputs one base64-encoded PNG image per each URL, separated by newl
 
 ### Building
 
-To build Batch QRs, you need Go >= 1.25.0.
+To build Batch QRs, you need Go >= 1.24.7.
 Build by running:
 
 ```bash
