@@ -2,6 +2,8 @@
 
 Batch QRs is a tiny program which batch-creates QR code images from a list of URL strings.
 
+The main focus here is performance: QR encoding is parallelized and avoids disk I/O to make it as fast as possible.
+
 ### Usage
 
 The URL strings to be turned into QR code images are supplied as arguments to the program:

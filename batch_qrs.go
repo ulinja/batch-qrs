@@ -8,7 +8,20 @@ import (
 	"github.com/yeqown/go-qrcode/writer/standard"
 	"io"
 	"os"
+	"runtime"
+	"sync"
 )
+
+type job struct {
+	index   int
+	payload string
+}
+
+type result struct {
+	index int
+	data  string
+	err   error
+}
 
 func main() {
 	var args = os.Args[1:]
@@ -16,9 +29,49 @@ func main() {
 		errorExit("at least one argument is required")
 	}
 
-	for _, arg := range args {
-		bytes := generateQrCode(arg)
-		fmt.Println(base64Encode(bytes))
+	numWorkers := runtime.NumCPU()
+	jobs := make(chan job, len(args))
+	results := make(chan result, len(args))
+
+	var wg sync.WaitGroup
+
+	for range numWorkers {
+		wg.Add(1)
+		go worker(jobs, results, &wg)
+	}
+
+	for i, arg := range args {
+		jobs <- job{index: i, payload: arg}
+	}
+	close(jobs)
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	orderedResults := make([]string, len(args))
+	for r := range results {
+		if r.err != nil {
+			errorExit(r.err.Error())
+		}
+		orderedResults[r.index] = r.data
+	}
+
+	for _, data := range orderedResults {
+		fmt.Println(data)
+	}
+}
+
+func worker(jobs <-chan job, results chan<- result, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for j := range jobs {
+		bytes := generateQrCode(j.payload)
+		results <- result{
+			index: j.index,
+			data:  base64Encode(bytes),
+			err:   nil,
+		}
 	}
 }
 
