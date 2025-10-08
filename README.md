@@ -2,12 +2,14 @@
 
 Batch QRs is a tiny program which batch-creates QR code images from a list of URL strings.
 
+The main focus here is **performance**: batch QR encoding is CPU-parallelized and avoids disk I/O entirely, making it really fast.
+
 ### Usage
 
 The URL strings to be turned into QR code images are supplied as arguments to the program:
 
 ```bash
-batch_qrs URL...
+./batch_qrs URL...
 ```
 
 The program outputs one base64-encoded PNG image per each URL, separated by newlines.
@@ -16,7 +18,7 @@ The program outputs one base64-encoded PNG image per each URL, separated by newl
 
 ```bash
 # Outputs three base64-encoded PNG images
-batch_qrs https://example.com/ https://acme.org/ https://wikipedia.org/
+./batch_qrs https://example.com/ https://acme.org/ https://wikipedia.org/
 ```
 
 ### Building
